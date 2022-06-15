@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chargingStation">
+
+	<sql id="search" >
+		SELECT * FROM ChargingStation 
+		<where>
+			<if test="search == 1">
+				code=#{keyword}
+			</if>
+			
+			<if test="search == 2">
+				name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>
+			
+			<if test="search == 3">
+				address LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>
+			
+			<if test="search == 4">
+				organization LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>
+			
+			<if test="search == 5">
+				id LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>			
+		</where>
+		ORDER BY display, code desc 
+		
+	</sql>
+	
+	<select id="charList" resultMap="ChargingStationMap">
+		select ROWNUM rnum, CS.*, 
+			C_Img.code image_code, 
+			C_Img.filename filename, 
+			C_Img.uuid uuid,
+			C_Img.charging_code charging_code from 
+		(<include refid="search"></include>) CS LEFT JOIN C_Img ON(CS.code = C_Img.charging_code)
+		WHERE display != ' '
+	</select>
+	
+	<select id="list" resultType="ChargingStation">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, T1.* FROM (<include refid="search"></include>) T1)
+		WHERE rnum BETWEEN (#{page}-1) * #{perPage} +1 and #{page} * #{perPage}
+	</select>
+	
+
+	
+	<select id="total" resultType="Long">
+		SELECT count(*) FROM (<include refid="search"></include>)
+	</select>
+	
+	<select id="item" resultType="ChargingStation">
+	
+		SELECT * FROM ChargingStation <!-- 
+		, CI.code image_code, CI.filename, CI.uuid, CI.charging_code FROM ChargingStation C join C_Img CI on (C.code = CI.charging_code)
+		 -->
+		WHERE code = #{code}
+		
+	</select>
+	
+	<resultMap type="ChargingStation" id="ChargingStationMap">
+		<id column="code" property="code" />
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="address" property="address"/>
+		<result column="organization" property="organization"/>
+		<result column="tel" property="tel"/>
+		<result column="fare" property="fare"/>
+		<result column="available_time" property="availableTime"/>
+		<result column="type" property="type"/>
+		<result column="charge_amount" property="chargeAmount"/>
+		<result column="display" property="display"/>
+		<result column="lat" property="lat"/>
+		<result column="lng" property="lng"/>
+		
+		<collection property="images" column="charging_code" ofType="CImg" javaType="ArrayList">
+			<id column="image_code" property="code"/>
+			<result column="filename" property="filename"/>
+			<result column="uuid" property="uuid"/>
+			<result column="charging_code" property="chargingCode"/>
+		</collection>		
+	</resultMap>
+	
+	<insert id="add">
+		INSERT INTO ChargingStation
+		(code,id, name, address, organization, tel, fare, available_time, type, charge_amount,display,lat,lng)
+		VALUES (CHARGINGSTATIONSEQ.nextval,#{id}, #{name},
+		#{address}, #{organization},
+		CONCAT(CONCAT(CONCAT(CONCAT(#{tel1}, '-'), #{tel2}), '-'), #{tel3}), 
+		#{fare}, CONCAT(CONCAT(#{availableTime1},'~'),#{availableTime2}), #{type}, #{chargeAmount},' ',
+		#{lat}, #{lng}
+		)
+		
+		<selectKey keyProperty="code" resultType="Long" order="AFTER">
+			SELECT CHARGINGSTATIONSEQ.currval FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<update id="update">
+		UPDATE ChargingStation
+		SET name=#{name}, address=#{address}, organization =#{organization}, 
+		tel =CONCAT(CONCAT(CONCAT(CONCAT(#{tel1}, '-'), #{tel2}), '-'), #{tel3})
+		, fare =#{fare}, available_time = #{availableTime}, type =#{type}
+		, charge_amount =#{chargeAmount},
+		lat = #{lat} , lng = #{lng}
+		where id = #{id} and code = #{code}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM ChargingStation
+		WHERE code = #{code}
+	</delete>
+	
+	<update id="locView">
+		UPDATE ChargingStation
+		SET display = #{display}
+		where code = #{code}
+	</update>
+	
+	<select id="mypage" resultType="ChargingStation">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, T1.* FROM (<include refid="search"></include>) T1)
+		WHERE id = #{id} and rnum BETWEEN (#{page}-1) * #{perPage} +1 and #{page} * #{perPage}
+	</select>
+	
+	<select id="mypageTotal" resultType="Long">
+		SELECT count(*) FROM ChargingStation
+		WHERE id = #{id}
+	</select>
+	
+</mapper>

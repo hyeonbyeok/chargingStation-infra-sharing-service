@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cImg">		
+	<insert id="add">					
+		INSERT INTO C_Img
+		VALUES (ChargingImgSeq.nextval, #{chargingCode}, #{filename}, #{uuid})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM C_Img
+		WHERE code=#{code}
+	</delete>
+	
+	<select id="item" resultType="CImg">
+		SELECT * FROM C_Img
+		WHERE charging_code = #{code}
+	</select>
+	
+</mapper>

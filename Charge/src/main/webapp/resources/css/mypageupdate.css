@@ -1,0 +1,117 @@
+@charset "UTF-8";
+body{
+	margin:0;
+	padding: 0;
+	font-family: 'Noto Sans Kr','San-serif';
+	width:100%;
+	height: 100%;
+	background-color: #f3f5f7;
+}
+
+ul,ol,li{
+	list-style: none;
+}
+
+a:visited,a:hover,a:link{
+	text-decoration: none;
+	color:black;
+}
+
+h1,h2,h3,h4,h5,h6,span,p,button,ul,li,ol,a{
+	margin:0;
+	padding:0;
+}
+
+/*  메인 */
+#container{
+	width:768px;
+	height: 100%;
+	margin:0 auto;
+	margin-top:50px;
+	padding:20px 0;
+	margin-bottom:50px;
+	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 40%);
+}
+
+.main_gaza{
+	text-align: center;
+	margin-bottom: 40px;
+}
+.main_gaza > a{
+	display:inline-block;
+	width:120px;
+	height: 40px;
+	background: url("/img/logo(blk).png");
+	margin-top:30px;
+}
+.main_gaza > a > span{
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	margin:-1px;
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+#update{
+	margin:0 auto;
+	width:500px;
+	
+}
+
+.user_wrap{
+	margin:30px 0;
+}
+
+.user_wrap > label{
+	font-size:16px;
+	font-weight: 500;
+}
+
+.div_id{
+	padding:10px 0 0;
+}
+.div_id > input{
+	padding:15px;
+	width:100%;
+	height: 100%;
+	border:1px solid #dadada;
+	font-size:18px;
+}
+
+.btn_wrap{
+	padding-top:30px;
+}
+.btn_wrap > button{
+	width:100%;
+	padding:10px;
+	font-size:20px;
+	font-weight: 500;
+	background-color: #00cccc;
+	color:#fff;
+	border:none;
+	border-radius: 5px;
+	height: 60px;
+	cursor: pointer;
+}
+
+.dejavu{
+	padding-top:20px;
+	width:100%;
+	text-align: center;
+}
+.dejavu > a{
+	font-size:18px;
+	font-weight: 200;
+	opacity: 0.8;
+}
+
+#update > a {
+	padding-top:40px;
+	font-size:16px;
+	text-align: center;
+	font-weight: 300;
+	opacity: 0.8;
+}
+

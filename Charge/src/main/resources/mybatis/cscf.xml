@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cscf">
+	<sql id="search">
+		SELECT * FROM CSCF 
+		<where>
+			<if test="search == 1">
+				code=#{keyword}
+			</if>
+			
+			<if test="search == 2">
+				title LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>
+			
+			<if test="search == 3">
+				id LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>	
+		</where>
+		ORDER BY stats desc, code desc
+	</sql>
+	
+	<insert id="add">
+		INSERT INTO CSCF (code, title, content, id)
+		VALUES (CscfSeq.nextval, #{title}, #{content}, #{id})
+		<selectKey keyProperty="code" resultType="Long" order="AFTER">
+			SELECT CSCFSEQ.currval FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<select id="list" resultType="CSCF">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, T1.* FROM (<include refid="search"></include>) T1)
+		WHERE rnum BETWEEN (#{page}-1) * #{perPage} +1 and #{page} * #{perPage}
+	</select>
+	
+	<select id="total" resultType="Long">
+		SELECT count(*) FROM (<include refid="search"></include>)
+	</select>
+	
+	<select id="item" resultType="CSCF">
+		SELECT * FROM CSCF
+		WHERE code = #{code}
+	</select>
+	
+	<update id="stats">
+		UPDATE CSCF
+		SET stats = #{stats}
+		WHERE code = #{code}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM CSCF
+		WHERE code = #{code}
+	</delete>
+	
+	<select id="mypage" resultType="CSCF">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, T1.* FROM (<include refid="search"></include>) T1)
+		WHERE id = #{id} and rnum BETWEEN (#{page}-1) * #{perPage} +1 and #{page} * #{perPage}
+	</select>
+	
+	<select id="mypageTotal" resultType="Long">
+		SELECT count(*) FROM CSCF
+		WHERE id = #{id}
+	</select>
+</mapper>

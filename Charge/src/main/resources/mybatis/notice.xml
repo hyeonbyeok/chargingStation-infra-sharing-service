@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">
+	<sql id="search">
+		SELECT * FROM notice 
+		<where>
+			<if test="search == 1">
+				code=#{keyword}
+			</if>
+			
+			<if test="search == 2">
+				title LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+			</if>
+		</where>
+		ORDER BY code desc
+	</sql>
+	
+	
+	<select id="list" resultType="Notice">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, T1.* FROM (<include refid="search"></include>) T1)
+		WHERE rnum BETWEEN (#{page}-1) * #{perPage} +1 and #{page} * #{perPage}
+	</select>
+	
+	<select id="total" resultType="Long">
+		SELECT count(*) FROM (<include refid="search"></include>)
+	</select>
+	
+	<insert id="add">
+		INSERT INTO notice (code, id, title, contents, reg_date)
+		VALUES (NoticeSeq.nextval, #{id}, #{title}, #{contents}, sysdate)
+		<selectKey keyProperty="code" resultType="Long" order="AFTER">
+			SELECT NoticeSeq.currval FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<delete id="delete">
+		delete from notice
+		where code=#{code}
+	</delete>
+	
+	<select id="item" resultType="Notice">
+		SELECT * FROM notice
+		WHERE code = #{code}
+	</select>
+	
+	<update id="update">
+		update notice
+		set title=#{title}, contents=#{contents}
+		where code=#{code}
+	</update>
+	
+	<update id="viewCount">
+		update notice
+		set view_count = view_count + 1
+		where code=#{code}
+	</update>
+	
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cscfImg">		
+	<insert id="add">					
+		INSERT INTO CSCF_Img
+		VALUES (cscfImgSeq.nextval, #{cscfCode}, #{uuid}, #{filename})
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM CSCF_Img
+		WHERE code=#{code}
+	</delete>
+	
+	<select id="item" resultType="CSCFImg">
+		SELECT * FROM CSCF_Img
+		WHERE cscf_code = #{code}
+	</select>
+</mapper>
